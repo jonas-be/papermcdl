@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gdamore/tcell/v2"
 	"log"
 	"papermc-downloader/internal/cli/list"
@@ -53,16 +54,27 @@ func main() {
 		case *tcell.EventResize:
 			s.Sync()
 		case *tcell.EventKey:
-			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC {
+			if ev.Key() == tcell.KeyCtrlC {
 				return
+			} else if ev.Key() == tcell.KeyEscape {
+				done := papermcSelector.GoBack()
+				if done {
+					return
+				}
 			} else if ev.Key() == tcell.KeyDown {
 				papermcSelector.SelectorDown()
 			} else if ev.Key() == tcell.KeyUp {
 				papermcSelector.SelectorUp()
 			} else if ev.Key() == tcell.KeyEnter {
-				papermcSelector.EnterInput()
+				err := papermcSelector.EnterInput()
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
 			}
 		}
-		papermcSelector.Render()
+		if papermcSelector.View != "no-render" {
+			papermcSelector.Render()
+		}
 	}
 }

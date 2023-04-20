@@ -11,13 +11,17 @@ import (
 
 type PapermcSelector struct {
 	PapermcApi   paper_api.PapermcAPI
-	view         string
+	View         string
 	List         list.List
 	project      string
 	versionGroup string
 	versions     paper_api.Versions
 	version      string
 	build        string
+}
+
+func (p PapermcSelector) GetSelections() (string, string, string) {
+	return p.project, p.version, p.build
 }
 
 func (p *PapermcSelector) SelectorUp() {
@@ -32,8 +36,8 @@ func (p PapermcSelector) Render() {
 	p.List.Render()
 }
 
-func (p *PapermcSelector) EnterInput() {
-	switch p.view {
+func (p *PapermcSelector) EnterInput() error {
+	switch p.View {
 	case "projects":
 		p.project = p.List.GetSelected()
 		p.ShowVersionGroups(p.project)
@@ -48,8 +52,35 @@ func (p *PapermcSelector) EnterInput() {
 		break
 	case "builds":
 		p.build = p.List.GetSelected()
+		p.View = "no-render"
+		err := ShowBuildInfo(p.List.Screen, p.PapermcApi, p.project, p.version, p.build)
+		if err != nil {
+			return err
+		}
 		break
 	}
+	p.List.Selected = 0
+	return nil
+}
+
+func (p *PapermcSelector) GoBack() bool {
+	p.List.Selected = 0
+	switch p.View {
+	case "version-groups":
+		p.ShowProjects()
+		return false
+	case "versions":
+		p.ShowVersionGroups(p.project)
+		return false
+	case "builds":
+		p.ShowVersions(p.versions, p.version)
+		return false
+	case "no-render":
+		p.ShowBuilds(p.project, p.version)
+		p.View = "builds"
+		return false
+	}
+	return true
 }
 
 func (p *PapermcSelector) ShowProjects() {
@@ -59,7 +90,7 @@ func (p *PapermcSelector) ShowProjects() {
 		return
 	}
 	p.List.List = projects.Projects
-	p.view = "projects"
+	p.View = "projects"
 }
 
 func (p *PapermcSelector) ShowVersionGroups(project string) {
@@ -68,17 +99,20 @@ func (p *PapermcSelector) ShowVersionGroups(project string) {
 		fmt.Println("fetch failed: ", err)
 		return
 	}
+	p.List.Tags = []list.Tag{{Name: "latest", ID: 0}}
 	p.List.List = util.ReverseStringArray(versions.VersionGroups)
 	p.versions = versions
-	p.view = "version-groups"
+	p.View = "version-groups"
 }
 
 func (p *PapermcSelector) ShowVersions(versions paper_api.Versions, version string) {
+	p.List.Tags = []list.Tag{{Name: "latest", ID: 0}}
 	p.List.List = util.ReverseStringArray(p.versionGroupFilter(versions, version))
-	p.view = "versions"
+	p.View = "versions"
 }
 
 func (p *PapermcSelector) ShowBuilds(project string, version string) {
+	p.List.Tags = []list.Tag{{Name: "latest", ID: 0}}
 	builds, err := p.PapermcApi.GetBuilds(project, version)
 	if err != nil {
 		fmt.Println("fetch failed: ", err)
@@ -92,7 +126,7 @@ func (p *PapermcSelector) ShowBuilds(project string, version string) {
 	}
 
 	p.List.List = util.ReverseStringArray(stringSlice)
-	p.view = "builds"
+	p.View = "builds"
 }
 
 func (p PapermcSelector) versionGroupFilter(versions paper_api.Versions, version string) []string {
