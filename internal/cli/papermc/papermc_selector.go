@@ -67,13 +67,13 @@ func (p *PapermcSelector) ShowVersionGroups(project string) {
 		fmt.Println("fetch failed: ", err)
 		return
 	}
-	p.List.List = versions.VersionGroups
+	p.List.List = reverseStringArray(versions.VersionGroups)
 	p.versions = versions
 	p.view = "version-groups"
 }
 
 func (p *PapermcSelector) ShowVersions(versions paper_api.Versions, version string) {
-	p.List.List = p.versionGroupFilter(versions, version)
+	p.List.List = reverseStringArray(p.versionGroupFilter(versions, version))
 	p.view = "versions"
 }
 
@@ -90,13 +90,13 @@ func (p *PapermcSelector) ShowBuilds(project string, version string) {
 		stringSlice = append(stringSlice, strconv.Itoa(intValue))
 	}
 
-	p.List.List = stringSlice
+	p.List.List = reverseStringArray(stringSlice)
 	p.view = "builds"
 }
 
 func (p PapermcSelector) versionGroupFilter(versions paper_api.Versions, version string) []string {
 	var versionList []string
-	versionListTmp := []string{}
+	var versionListTmp []string
 
 	filter := ""
 	for i, _ := range version {
@@ -113,4 +113,12 @@ func (p PapermcSelector) versionGroupFilter(versions paper_api.Versions, version
 		versionList = versionListTmp
 	}
 	return versionList
+}
+
+func reverseStringArray(arr []string) []string {
+	reversed := make([]string, len(arr))
+	for i, j := 0, len(arr)-1; i < len(arr); i, j = i+1, j-1 {
+		reversed[i] = arr[j]
+	}
+	return reversed
 }
