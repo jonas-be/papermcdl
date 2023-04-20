@@ -3,6 +3,7 @@ package papermc
 import (
 	"fmt"
 	"papermc-downloader/internal/cli/list"
+	"papermc-downloader/internal/util"
 	"papermc-downloader/pkg/paper_api"
 	"strconv"
 	"strings"
@@ -67,13 +68,13 @@ func (p *PapermcSelector) ShowVersionGroups(project string) {
 		fmt.Println("fetch failed: ", err)
 		return
 	}
-	p.List.List = reverseStringArray(versions.VersionGroups)
+	p.List.List = util.ReverseStringArray(versions.VersionGroups)
 	p.versions = versions
 	p.view = "version-groups"
 }
 
 func (p *PapermcSelector) ShowVersions(versions paper_api.Versions, version string) {
-	p.List.List = reverseStringArray(p.versionGroupFilter(versions, version))
+	p.List.List = util.ReverseStringArray(p.versionGroupFilter(versions, version))
 	p.view = "versions"
 }
 
@@ -90,7 +91,7 @@ func (p *PapermcSelector) ShowBuilds(project string, version string) {
 		stringSlice = append(stringSlice, strconv.Itoa(intValue))
 	}
 
-	p.List.List = reverseStringArray(stringSlice)
+	p.List.List = util.ReverseStringArray(stringSlice)
 	p.view = "builds"
 }
 
@@ -113,12 +114,4 @@ func (p PapermcSelector) versionGroupFilter(versions paper_api.Versions, version
 		versionList = versionListTmp
 	}
 	return versionList
-}
-
-func reverseStringArray(arr []string) []string {
-	reversed := make([]string, len(arr))
-	for i, j := 0, len(arr)-1; i < len(arr); i, j = i+1, j-1 {
-		reversed[i] = arr[j]
-	}
-	return reversed
 }
