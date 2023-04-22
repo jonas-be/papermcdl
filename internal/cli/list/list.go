@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gdamore/tcell/v2"
 	"papermc-downloader/internal/util"
+	"papermc-downloader/internal/util/screen"
 	"strconv"
 )
 
@@ -47,16 +48,16 @@ func (l *List) Render() {
 
 		style, writerPos = l.insertSelectorColumn(i, style, writerPos)
 
-		writerPos = l.insertSpacer(1, writerPos, i, style)
+		writerPos = screen.InsertChars(l.Screen, 1, ' ', writerPos, i, style)
 
 		writerPos = l.insertRowId(writerPos, idMaxLen, i, style)
 
-		writerPos = l.insertSpacer(1, writerPos, i, style)
-		writerPos = l.insertChar(1, '|', writerPos, i, style)
+		writerPos = screen.InsertChars(l.Screen, 1, ' ', writerPos, i, style)
+		writerPos = screen.InsertChars(l.Screen, 1, '|', writerPos, i, style)
 
-		writerPos = l.insertSpacer(1, writerPos, i, style)
+		writerPos = screen.InsertChars(l.Screen, 1, ' ', writerPos, i, style)
 		writerPos = l.drawTagColumn(maxTagLen, writerPos, i, style)
-		writerPos = l.insertSpacer(1, writerPos, i, style)
+		writerPos = screen.InsertChars(l.Screen, 1, ' ', writerPos, i, style)
 
 		for n, char := range listItem {
 			l.Screen.SetContent(n+writerPos, i, char, nil, style)
@@ -67,9 +68,9 @@ func (l *List) Render() {
 func (l *List) insertSelectorColumn(i int, style tcell.Style, writerPos int) (tcell.Style, int) {
 	if l.Selected == i {
 		style = l.SelectedStyle
-		writerPos = l.insertChar(1, '>', writerPos, i, style)
+		writerPos = screen.InsertChars(l.Screen, 1, '>', writerPos, i, style)
 	} else {
-		writerPos = l.insertSpacer(1, writerPos, i, style)
+		writerPos = screen.InsertChars(l.Screen, 1, ' ', writerPos, i, style)
 	}
 	return style, writerPos
 }
@@ -111,28 +112,12 @@ func (l *List) drawTagColumn(maxTagLen int, writerPos int, i int, style tcell.St
 	var char rune
 	if tagToDraw.Name != "" {
 		for tagWriterPos, char = range fmt.Sprintf("(%v)", tagToDraw.Name) {
-			writerPos = l.insertChar(1, char, writerPos, i, style)
+			writerPos = screen.InsertChars(l.Screen, 1, char, writerPos, i, style)
 		}
 		tagWriterPos++
 	}
 	for n := tagWriterPos; n < maxTagLen; n++ {
-		writerPos = l.insertChar(1, ' ', writerPos, i, style)
-	}
-	return writerPos
-}
-
-func (l *List) insertSpacer(count int, writerPos int, i int, style tcell.Style) int {
-	for n := 0; n < count; n++ {
-		l.Screen.SetContent(writerPos, i, ' ', nil, style)
-		writerPos++
-	}
-	return writerPos
-}
-
-func (l *List) insertChar(count int, char rune, writerPos int, i int, style tcell.Style) int {
-	for n := 0; n < count; n++ {
-		l.Screen.SetContent(writerPos, i, char, nil, style)
-		writerPos++
+		writerPos = screen.InsertChars(l.Screen, 1, ' ', writerPos, i, style)
 	}
 	return writerPos
 }

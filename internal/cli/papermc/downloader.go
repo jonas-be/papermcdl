@@ -3,6 +3,7 @@ package papermc
 import (
 	"fmt"
 	"github.com/gdamore/tcell/v2"
+	"papermc-downloader/internal/util/screen"
 	"papermc-downloader/pkg/paper_api"
 	"strconv"
 )
@@ -57,17 +58,11 @@ func drawCell(s tcell.Screen, maxLen int, str string, writerPos int, line int, s
 	var tagWriterPos int
 	var char rune
 	for tagWriterPos, char = range fmt.Sprintf("%v", str) {
-		writerPos = insertChar(s, char, writerPos, line, style)
+		writerPos = screen.InsertChar(s, char, writerPos, line, style)
 	}
 	tagWriterPos++
 	for n := tagWriterPos; n < maxLen; n++ {
-		writerPos = insertChar(s, ' ', writerPos, line, style)
+		writerPos = screen.InsertChar(s, ' ', writerPos, line, style)
 	}
-	return writerPos
-}
-
-func insertChar(s tcell.Screen, char rune, writerPos int, line int, style tcell.Style) int {
-	s.SetContent(writerPos, line, char, nil, style)
-	writerPos++
 	return writerPos
 }

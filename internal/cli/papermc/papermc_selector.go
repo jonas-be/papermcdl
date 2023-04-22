@@ -68,19 +68,19 @@ func (p *PapermcSelector) GoBack() bool {
 	switch p.View {
 	case "version-groups":
 		p.ShowProjects()
-		return false
+		return true
 	case "versions":
 		p.ShowVersionGroups(p.project)
-		return false
+		return true
 	case "builds":
 		p.ShowVersions(p.versions, p.version)
-		return false
+		return true
 	case "no-render":
 		p.ShowBuilds(p.project, p.version)
 		p.View = "builds"
-		return false
+		return true
 	}
-	return true
+	return false
 }
 
 func (p *PapermcSelector) ShowProjects() {

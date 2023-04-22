@@ -58,7 +58,7 @@ func main() {
 				return
 			} else if ev.Key() == tcell.KeyEscape {
 				done := papermcSelector.GoBack()
-				if done {
+				if !done {
 					return
 				}
 			} else if ev.Key() == tcell.KeyDown {
