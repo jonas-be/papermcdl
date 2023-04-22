@@ -13,6 +13,7 @@ type PapermcSelector struct {
 	PapermcApi   paper_api.PapermcAPI
 	View         string
 	List         list.List
+	Line         int
 	project      string
 	versionGroup string
 	versions     paper_api.Versions
@@ -33,7 +34,16 @@ func (p *PapermcSelector) SelectorDown() {
 }
 
 func (p PapermcSelector) Render() {
+	p.List.Line = p.Line
 	p.List.Render()
+}
+
+func (p PapermcSelector) Download() error {
+	err := p.PapermcApi.Download(p.project, p.version, p.build)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (p *PapermcSelector) EnterInput() error {
@@ -52,11 +62,14 @@ func (p *PapermcSelector) EnterInput() error {
 		break
 	case "builds":
 		p.build = p.List.GetSelected()
-		p.View = "no-render"
-		err := ShowBuildInfo(p.List.Screen, p.PapermcApi, p.project, p.version, p.build)
+		p.View = "build-info"
+		err := ShowBuildInfo(p.List.Screen, p.Line, p.PapermcApi, p.project, p.version, p.build)
 		if err != nil {
 			return err
 		}
+		break
+	case "build-info":
+		p.View = "download"
 		break
 	}
 	p.List.Selected = 0
@@ -75,7 +88,7 @@ func (p *PapermcSelector) GoBack() bool {
 	case "builds":
 		p.ShowVersions(p.versions, p.version)
 		return true
-	case "no-render":
+	case "build-info":
 		p.ShowBuilds(p.project, p.version)
 		p.View = "builds"
 		return true

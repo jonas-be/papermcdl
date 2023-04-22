@@ -10,6 +10,7 @@ import (
 
 type List struct {
 	Screen        tcell.Screen
+	Line          int
 	List          []string
 	Tags          []Tag
 	Selected      int
@@ -43,30 +44,31 @@ func (l *List) Render() {
 
 	idMaxLen := len(strconv.Itoa(len(l.List)))
 	for i, listItem := range l.List {
+		line := i + l.Line
 		writerPos := 0
 		style := l.DefaultStyle
 
-		style, writerPos = l.insertSelectorColumn(i, style, writerPos)
+		style, writerPos = l.insertSelectorColumn(line, style, writerPos)
 
-		writerPos = screen.InsertChars(l.Screen, 1, ' ', writerPos, i, style)
+		writerPos = screen.InsertChars(l.Screen, 1, ' ', writerPos, line, style)
 
 		writerPos = l.insertRowId(writerPos, idMaxLen, i, style)
 
-		writerPos = screen.InsertChars(l.Screen, 1, ' ', writerPos, i, style)
-		writerPos = screen.InsertChars(l.Screen, 1, '|', writerPos, i, style)
+		writerPos = screen.InsertChars(l.Screen, 1, ' ', writerPos, line, style)
+		writerPos = screen.InsertChars(l.Screen, 1, '|', writerPos, line, style)
 
-		writerPos = screen.InsertChars(l.Screen, 1, ' ', writerPos, i, style)
+		writerPos = screen.InsertChars(l.Screen, 1, ' ', writerPos, line, style)
 		writerPos = l.drawTagColumn(maxTagLen, writerPos, i, style)
-		writerPos = screen.InsertChars(l.Screen, 1, ' ', writerPos, i, style)
+		writerPos = screen.InsertChars(l.Screen, 1, ' ', writerPos, line, style)
 
 		for n, char := range listItem {
-			l.Screen.SetContent(n+writerPos, i, char, nil, style)
+			l.Screen.SetContent(n+writerPos, line, char, nil, style)
 		}
 	}
 }
 
 func (l *List) insertSelectorColumn(i int, style tcell.Style, writerPos int) (tcell.Style, int) {
-	if l.Selected == i {
+	if l.Selected == i-l.Line {
 		style = l.SelectedStyle
 		writerPos = screen.InsertChars(l.Screen, 1, '>', writerPos, i, style)
 	} else {
@@ -80,11 +82,11 @@ func (l *List) insertRowId(writerPos int, idMaxLen int, i int, style tcell.Style
 	var ni int
 	var s rune
 	for ni, s = range util.ReverseString(strconv.Itoa(i)) {
-		l.Screen.SetContent(writerPos, i, s, nil, style)
+		l.Screen.SetContent(writerPos, i+l.Line, s, nil, style)
 		writerPos--
 	}
 	for n := ni; ni < idMaxLen-1; ni++ {
-		l.Screen.SetContent(writerPos-n, i, ' ', nil, style)
+		l.Screen.SetContent(writerPos-n, i+l.Line, ' ', nil, style)
 		writerPos--
 	}
 	writerPos += idMaxLen + 1
@@ -112,12 +114,12 @@ func (l *List) drawTagColumn(maxTagLen int, writerPos int, i int, style tcell.St
 	var char rune
 	if tagToDraw.Name != "" {
 		for tagWriterPos, char = range fmt.Sprintf("(%v)", tagToDraw.Name) {
-			writerPos = screen.InsertChars(l.Screen, 1, char, writerPos, i, style)
+			writerPos = screen.InsertChars(l.Screen, 1, char, writerPos, i+l.Line, style)
 		}
 		tagWriterPos++
 	}
 	for n := tagWriterPos; n < maxTagLen; n++ {
-		writerPos = screen.InsertChars(l.Screen, 1, ' ', writerPos, i, style)
+		writerPos = screen.InsertChars(l.Screen, 1, ' ', writerPos, i+l.Line, style)
 	}
 	return writerPos
 }

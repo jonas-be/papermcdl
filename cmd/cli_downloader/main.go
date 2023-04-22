@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"github.com/gdamore/tcell/v2"
 	"log"
+	"papermc-downloader/internal/cli/header"
 	"papermc-downloader/internal/cli/list"
 	"papermc-downloader/internal/cli/papermc"
+	"papermc-downloader/internal/util/screen"
 	"papermc-downloader/pkg/paper_api"
 )
 
@@ -27,14 +29,22 @@ func main() {
 	papermcAPI := paper_api.PapermcAPI{URL: "https://papermc.io"}
 	papermcSelector := papermc.PapermcSelector{
 		PapermcApi: papermcAPI,
+		Line:       2,
 		List: list.List{
-			Screen:        s,
+			Screen: s,
+			//Line:          1,
 			List:          nil,
 			DefaultStyle:  defStyle,
 			SelectedStyle: boxStyle,
 		},
 	}
 	papermcSelector.ShowProjects()
+	header := header.Header{
+		Screen: s,
+		Title:  papermcSelector.View,
+	}
+
+	header.Render(0)
 
 	quit := func() {
 		maybePanic := recover()
@@ -73,8 +83,25 @@ func main() {
 				}
 			}
 		}
-		if papermcSelector.View != "no-render" {
+		if papermcSelector.View == "build-info" {
+			screen.FullWidthField(s, "[ENTER] Download ", 8)
+		} else if papermcSelector.View == "download" {
+			s.Clear()
+			screen.FullWidthField(s, "Downloading ", 4)
+			go func(s tcell.Screen) {
+				err := papermcSelector.Download()
+				if err != nil {
+					_ = s.Beep()
+					fmt.Println("download failed: ", err)
+					return
+				}
+
+				_ = s.Beep()
+			}(s)
+		} else {
 			papermcSelector.Render()
 		}
+		header.Title = papermcSelector.View
+		header.Render(0)
 	}
 }

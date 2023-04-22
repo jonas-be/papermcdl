@@ -13,7 +13,7 @@ type DataField struct {
 	Value string
 }
 
-func ShowBuildInfo(s tcell.Screen, api paper_api.PapermcAPI, project string, version string, build string) error {
+func ShowBuildInfo(s tcell.Screen, line int, api paper_api.PapermcAPI, project string, version string, build string) error {
 	buildInfo, err := api.GetBuildInfo(project, version, build)
 	if err != nil {
 		return err
@@ -27,11 +27,11 @@ func ShowBuildInfo(s tcell.Screen, api paper_api.PapermcAPI, project string, ver
 	}
 
 	s.Clear()
-	NewInfoTable(s, dataTable)
+	NewInfoTable(s, line, dataTable)
 	return nil
 }
 
-func NewInfoTable(s tcell.Screen, data []DataField) {
+func NewInfoTable(s tcell.Screen, line int, data []DataField) {
 	var keyMaxLen int
 	var valMaxLen int
 	for _, dataField := range data {
@@ -42,8 +42,6 @@ func NewInfoTable(s tcell.Screen, data []DataField) {
 			valMaxLen = len(dataField.Value)
 		}
 	}
-
-	var line int
 
 	for _, dataField := range data {
 		var writerPos int

@@ -15,3 +15,24 @@ func InsertChars(s tcell.Screen, count int, char rune, writerPos int, line int, 
 	}
 	return writerPos
 }
+
+func FullWidthField(s tcell.Screen, text string, line int) {
+	width, _ := s.Size()
+
+	writerPos := 0
+	textWriterPos := 0
+	for i := 0; i < width; i++ {
+
+		if i >= (width)/2-(len(text)/2) {
+			if !(textWriterPos >= len(text)) {
+				writerPos = InsertChar(s, rune(text[textWriterPos]), writerPos, line, tcell.Style{}.Background(tcell.ColorGreen).Foreground(tcell.ColorBlack))
+				textWriterPos++
+			} else {
+				writerPos = InsertChar(s, ' ', writerPos, line, tcell.Style{}.Background(tcell.ColorGreen).Foreground(tcell.ColorBlack))
+			}
+		} else {
+			writerPos = InsertChar(s, ' ', writerPos, line, tcell.Style{}.Background(tcell.ColorGreen).Foreground(tcell.ColorBlack))
+		}
+	}
+
+}
