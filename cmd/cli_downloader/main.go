@@ -37,7 +37,7 @@ func main() {
 		fmt.Println("error getting projects: ", err)
 		return
 	}
-	if !checkVersionFlag(versions, projectFlag) {
+	if !checkVersionFlag(versions, versionFlag) {
 		return
 	}
 
@@ -46,7 +46,7 @@ func main() {
 		fmt.Println("error getting projects: ", err)
 		return
 	}
-	if !checkBuildFlag(builds, projectFlag) {
+	if !checkBuildFlag(builds, buildFlag) {
 		return
 	}
 
@@ -94,6 +94,7 @@ func checkBuildFlag(builds paper_api.Builds, buildFlag *string) bool {
 			fmt.Println("No latest build:", err)
 			return false
 		}
+		return true
 	}
 	fmt.Println("Please provide a valid build:")
 	builds.PrintBuilds()
