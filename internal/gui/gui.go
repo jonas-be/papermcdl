@@ -9,6 +9,7 @@ import (
 	"papermc-downloader/internal/gui/papermc"
 	"papermc-downloader/internal/util/screen"
 	"papermc-downloader/pkg/paper_api"
+	"time"
 )
 
 func StartGUI(papermcAPI paper_api.PapermcAPI) {
@@ -86,26 +87,46 @@ func StartGUI(papermcAPI paper_api.PapermcAPI) {
 			screen.FullWidthField(s, "[ENTER] Download ", 8)
 		} else if papermcSelector.View == "download" {
 			s.Clear()
-			//screen.FullWidthField(s, "Downloading ", 4)
-			//go func(s tcell.Screen) {
-			go func(s tcell.Screen) {
-				err := papermcSelector.Download(s)
-				if err != nil {
-					fmt.Println("hmmmmm")
-				}
-			}(s)
+			screen.FullWidthField(s, "Downloading...", 4)
+			s.Show()
+
+			stopChan := make(chan bool)
+			go downloadAnimation(s, stopChan)
+
+			err := papermcSelector.Download()
 			if err != nil {
-				//_ = s.Beep()
+				_ = s.Beep()
 				fmt.Println("download failed: ", err)
 				return
 			}
-
-			//_ = s.Beep()
-			//}(s)
+			stopChan <- true
+			quit()
+			fmt.Println("Download successfully!")
+			return
 		} else {
 			papermcSelector.Render()
 		}
 		header.Title = papermcSelector.View
 		header.Render(0)
+	}
+}
+
+func downloadAnimation(s tcell.Screen, stop chan bool) {
+	for {
+		select {
+		case <-stop:
+			return
+		default:
+			milli := time.Now().UnixMilli() % 1000
+			if milli < 333 {
+				screen.FullWidthField(s, "Downloading.  ", 4)
+			} else if milli < 666 {
+				screen.FullWidthField(s, "Downloading.. ", 4)
+			} else {
+				screen.FullWidthField(s, "Downloading...", 4)
+			}
+			s.Show()
+			time.Sleep(50 * time.Millisecond)
+		}
 	}
 }

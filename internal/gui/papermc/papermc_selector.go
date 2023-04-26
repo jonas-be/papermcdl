@@ -2,7 +2,6 @@ package papermc
 
 import (
 	"fmt"
-	"github.com/gdamore/tcell/v2"
 	"papermc-downloader/internal/gui/list"
 	"papermc-downloader/internal/util"
 	"papermc-downloader/pkg/latest"
@@ -40,12 +39,8 @@ func (p PapermcSelector) Render() {
 	p.List.Render()
 }
 
-func (p PapermcSelector) Download(s tcell.Screen) error {
-	downloadString, filename, err := p.PapermcApi.GetDownloadString(p.project, p.version, p.build)
-	if err != nil {
-		return err
-	}
-	err = DownloadWithProgressBar(downloadString, filename, s, 8)
+func (p PapermcSelector) Download() error {
+	err := p.PapermcApi.Download(p.project, p.version, p.build)
 	if err != nil {
 		return err
 	}
