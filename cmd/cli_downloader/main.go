@@ -55,7 +55,23 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(downloadString, " : ", filename)
+
+	fmt.Println(downloadString)
+	fmt.Println(filename)
+	if *infoFlag {
+		buildInfo, err := papermcAPI.GetBuildInfo(*projectFlag, *versionFlag, *buildFlag)
+		if err != nil {
+			fmt.Println("can not get buildInfo: ", err)
+			return
+		}
+		buildInfo.PrintBuildInfo()
+		return
+	}
+
+	err = papermcAPI.Download(*projectFlag, *versionFlag, *buildFlag)
+	if err != nil {
+		fmt.Println("can not download: ", err)
+	}
 }
 
 func checkProjectFlag(projects paper_api.Projects, projectFlag *string) bool {
