@@ -2,8 +2,10 @@ package papermc
 
 import (
 	"fmt"
-	"papermc-downloader/internal/cli/list"
+	"github.com/gdamore/tcell/v2"
+	"papermc-downloader/internal/gui/list"
 	"papermc-downloader/internal/util"
+	"papermc-downloader/pkg/latest"
 	"papermc-downloader/pkg/paper_api"
 	"strconv"
 	"strings"
@@ -38,8 +40,12 @@ func (p PapermcSelector) Render() {
 	p.List.Render()
 }
 
-func (p PapermcSelector) Download() error {
-	err := p.PapermcApi.Download(p.project, p.version, p.build)
+func (p PapermcSelector) Download(s tcell.Screen) error {
+	downloadString, filename, err := p.PapermcApi.GetDownloadString(p.project, p.version, p.build)
+	if err != nil {
+		return err
+	}
+	err = DownloadWithProgressBar(downloadString, filename, s, 8)
 	if err != nil {
 		return err
 	}
@@ -72,12 +78,10 @@ func (p *PapermcSelector) EnterInput() error {
 		p.View = "download"
 		break
 	}
-	p.List.Selected = 0
 	return nil
 }
 
 func (p *PapermcSelector) GoBack() bool {
-	p.List.Selected = 0
 	switch p.View {
 	case "version-groups":
 		p.ShowProjects()
@@ -112,20 +116,19 @@ func (p *PapermcSelector) ShowVersionGroups(project string) {
 		fmt.Println("fetch failed: ", err)
 		return
 	}
-	p.List.Tags = []list.Tag{{Name: "latest", ID: 0}}
 	p.List.List = util.ReverseStringArray(versions.VersionGroups)
 	p.versions = versions
+	p.selectAndTagLatest()
 	p.View = "version-groups"
 }
 
 func (p *PapermcSelector) ShowVersions(versions paper_api.Versions, version string) {
-	p.List.Tags = []list.Tag{{Name: "latest", ID: 0}}
 	p.List.List = util.ReverseStringArray(p.versionGroupFilter(versions, version))
+	p.selectAndTagLatest()
 	p.View = "versions"
 }
 
 func (p *PapermcSelector) ShowBuilds(project string, version string) {
-	p.List.Tags = []list.Tag{{Name: "latest", ID: 0}}
 	builds, err := p.PapermcApi.GetBuilds(project, version)
 	if err != nil {
 		fmt.Println("fetch failed: ", err)
@@ -139,6 +142,7 @@ func (p *PapermcSelector) ShowBuilds(project string, version string) {
 	}
 
 	p.List.List = util.ReverseStringArray(stringSlice)
+	p.selectAndTagLatest()
 	p.View = "builds"
 }
 
@@ -161,4 +165,12 @@ func (p PapermcSelector) versionGroupFilter(versions paper_api.Versions, version
 		versionList = versionListTmp
 	}
 	return versionList
+}
+
+func (p *PapermcSelector) selectAndTagLatest() {
+	id, item, err := latest.GetLatestItem(p.List.List)
+	if err == nil {
+		p.List.Tags = []list.Tag{{Label: "latest/stable", ItemName: item}}
+		p.List.Selected = id
+	}
 }

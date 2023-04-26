@@ -3,6 +3,8 @@ package paper_api
 import (
 	"encoding/json"
 	"fmt"
+	"papermc-downloader/internal/util"
+	"papermc-downloader/pkg/latest"
 )
 
 type Builds struct {
@@ -10,6 +12,20 @@ type Builds struct {
 	ProjectName string `json:"project_name"`
 	Version     string `json:"version"`
 	Builds      []int  `json:"builds"`
+}
+
+func (b Builds) PrintBuilds() {
+	for _, build := range b.Builds {
+		fmt.Println(build)
+	}
+}
+
+func (b Builds) GetLatestBuild() (string, error) {
+	_, item, err := latest.GetLatestItem(util.ReverseStringArray(latest.ConvertIntArrayToStringArray(b.Builds)))
+	if err != nil {
+		return "", err
+	}
+	return item, nil
 }
 
 func (p PapermcAPI) GetBuilds(project string, version string) (Builds, error) {
