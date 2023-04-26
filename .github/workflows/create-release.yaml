@@ -17,8 +17,8 @@ jobs:
       - name: Create Release
         id: create_release
         uses: ncipollo/release-action@v1
-        token: ${{ secrets.TOKEN }}
         with:
+          token: ${{ secrets.TOKEN }}
           tag: ${{ github.ref }}
           name: Release ${{ github.ref }}
           body: |
