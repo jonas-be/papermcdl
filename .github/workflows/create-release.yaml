@@ -9,10 +9,17 @@ jobs:
   create_release:
     runs-on: ubuntu-latest
     if: "!contains(github.ref, 'SNAPSHOT')"
+    outputs:
+      version: ${{ steps.gen_version.outputs.VERSION }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: set values
+        id: gen_version
+        run: |
+          echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
       - name: Create Release
         id: create_release
@@ -20,8 +27,8 @@ jobs:
         with:
           token: ${{ secrets.TOKEN }}
           tag: ${{ github.ref }}
-          name: Release ${{ github.ref.replace('refs/tags/', '') }}
+          name: Release ${{ steps.gen_version.outputs.VERSION }}
           body: |
-            This is release ${{ github.ref.replace('refs/tags/', '') }}
+            This is release ${{ steps.gen_version.outputs.VERSION }}
           draft: false
           prerelease: false
