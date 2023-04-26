@@ -58,7 +58,7 @@ func (l *List) Render() {
 		writerPos = screen.InsertChars(l.Screen, 1, '|', writerPos, line, style)
 
 		writerPos = screen.InsertChars(l.Screen, 1, ' ', writerPos, line, style)
-		writerPos = l.drawTagColumn(maxTagLen, writerPos, i, style)
+		writerPos = l.drawTagColumn(maxTagLen, writerPos, i, listItem, style)
 		writerPos = screen.InsertChars(l.Screen, 1, ' ', writerPos, line, style)
 
 		for n, char := range listItem {
@@ -95,7 +95,7 @@ func (l *List) insertRowId(writerPos int, idMaxLen int, i int, style tcell.Style
 
 func (l *List) getMaxTagLen(maxTagLen int) int {
 	for _, tag := range l.Tags {
-		tagLen := len(tag.Name) + 2
+		tagLen := len(tag.Label) + 2
 		if tagLen > maxTagLen {
 			maxTagLen = tagLen
 		}
@@ -103,17 +103,17 @@ func (l *List) getMaxTagLen(maxTagLen int) int {
 	return maxTagLen
 }
 
-func (l *List) drawTagColumn(maxTagLen int, writerPos int, i int, style tcell.Style) int {
+func (l *List) drawTagColumn(maxTagLen int, writerPos int, i int, listItem string, style tcell.Style) int {
 	var tagToDraw Tag
 	for _, tag := range l.Tags {
-		if i == tag.ID {
+		if listItem == tag.ItemName {
 			tagToDraw = tag
 		}
 	}
 	var tagWriterPos int
 	var char rune
-	if tagToDraw.Name != "" {
-		for tagWriterPos, char = range fmt.Sprintf("(%v)", tagToDraw.Name) {
+	if tagToDraw.Label != "" {
+		for tagWriterPos, char = range fmt.Sprintf("(%v)", tagToDraw.Label) {
 			writerPos = screen.InsertChars(l.Screen, 1, char, writerPos, i+l.Line, style)
 		}
 		tagWriterPos++

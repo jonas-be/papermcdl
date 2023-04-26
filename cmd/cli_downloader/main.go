@@ -1,107 +1,127 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"github.com/gdamore/tcell/v2"
-	"log"
-	"papermc-downloader/internal/cli/header"
-	"papermc-downloader/internal/cli/list"
-	"papermc-downloader/internal/cli/papermc"
-	"papermc-downloader/internal/util/screen"
+	"papermc-downloader/internal/gui"
+	"papermc-downloader/pkg/latest"
 	"papermc-downloader/pkg/paper_api"
+	"strings"
 )
 
 func main() {
-	defStyle := tcell.StyleDefault.Background(tcell.ColorReset).Foreground(tcell.ColorReset)
-	boxStyle := tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorPurple)
-
-	s, err := tcell.NewScreen()
-	if err != nil {
-		log.Fatalf("%+v", err)
-	}
-	if err := s.Init(); err != nil {
-		log.Fatalf("%+v", err)
-	}
-	s.SetStyle(defStyle)
-	s.EnablePaste()
-	s.Clear()
+	projectFlag := flag.String("p", "", "Project you want to download.")
+	versionFlag := flag.String("v", "", "Version or Version Group of the Project. You can use\"l\" to get the latest version.")
+	buildFlag := flag.String("b", "l", "(Optional) Build Number of the Project. You can use\"l\" to get the latest version.")
+	infoFlag := flag.Bool("i", false, "(Optional) Show info or list available only.")
+	flag.Parse()
 
 	papermcAPI := paper_api.PapermcAPI{URL: "https://papermc.io"}
-	papermcSelector := papermc.PapermcSelector{
-		PapermcApi: papermcAPI,
-		Line:       2,
-		List: list.List{
-			Screen: s,
-			//Line:          1,
-			List:          nil,
-			DefaultStyle:  defStyle,
-			SelectedStyle: boxStyle,
-		},
-	}
-	papermcSelector.ShowProjects()
-	header := header.Header{
-		Screen: s,
-		Title:  papermcSelector.View,
+
+	if *projectFlag == "" && *versionFlag == "" && *buildFlag == "l" && *infoFlag == false {
+		gui.StartGUI(papermcAPI)
+		return
 	}
 
-	header.Render(0)
+	projects, err := papermcAPI.GetProjects()
+	if err != nil {
+		fmt.Println("error getting projects: ", err)
+		return
+	}
+	if !checkProjectFlag(projects, projectFlag) {
+		return
+	}
 
-	quit := func() {
-		maybePanic := recover()
-		s.Fini()
-		if maybePanic != nil {
-			panic(maybePanic)
+	versions, err := papermcAPI.GetVersions(*projectFlag)
+	if err != nil {
+		fmt.Println("error getting projects: ", err)
+		return
+	}
+	if !checkVersionFlag(versions, versionFlag) {
+		return
+	}
+
+	builds, err := papermcAPI.GetBuilds(*projectFlag, *versionFlag)
+	if err != nil {
+		fmt.Println("error getting projects: ", err)
+		return
+	}
+	if !checkBuildFlag(builds, buildFlag) {
+		return
+	}
+
+	downloadString, filename, err := papermcAPI.GetDownloadString(*projectFlag, *versionFlag, *buildFlag)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(downloadString)
+	fmt.Println(filename)
+	if *infoFlag {
+		buildInfo, err := papermcAPI.GetBuildInfo(*projectFlag, *versionFlag, *buildFlag)
+		if err != nil {
+			fmt.Println("can not get buildInfo: ", err)
+			return
+		}
+		buildInfo.PrintBuildInfo()
+		return
+	}
+
+	err = papermcAPI.Download(*projectFlag, *versionFlag, *buildFlag)
+	if err != nil {
+		fmt.Println("can not download: ", err)
+	}
+}
+
+func checkProjectFlag(projects paper_api.Projects, projectFlag *string) bool {
+	if stringArrayContains(projects.Projects, *projectFlag) {
+		return true
+	}
+	fmt.Println("Please provide a valid project:")
+	projects.PrintProjects()
+	return false
+}
+
+func checkVersionFlag(versions paper_api.Versions, versionFlag *string) bool {
+	if stringArrayContains(versions.Versions, *versionFlag) {
+		return true
+	} else if strings.ToLower(*versionFlag) == "l" {
+		var err error
+		*versionFlag, err = versions.GetLatestVersion()
+		if err != nil {
+			fmt.Println("No latest version:", err)
+			return false
+		}
+		return true
+	}
+	fmt.Println("Please provide a valid version:")
+	versions.PrintVersions()
+	return false
+}
+
+func checkBuildFlag(builds paper_api.Builds, buildFlag *string) bool {
+	if stringArrayContains(latest.ConvertIntArrayToStringArray(builds.Builds), *buildFlag) {
+		return true
+	} else if strings.ToLower(*buildFlag) == "l" {
+		var err error
+		*buildFlag, err = builds.GetLatestBuild()
+		if err != nil {
+			fmt.Println("No latest build:", err)
+			return false
+		}
+		return true
+	}
+	fmt.Println("Please provide a valid build:")
+	builds.PrintBuilds()
+	return false
+}
+
+func stringArrayContains(arr []string, target string) bool {
+	for _, s := range arr {
+		if s == target {
+			return true
 		}
 	}
-	defer quit()
-
-	for {
-		s.Show()
-
-		ev := s.PollEvent()
-
-		switch ev := ev.(type) {
-		case *tcell.EventResize:
-			s.Sync()
-		case *tcell.EventKey:
-			if ev.Key() == tcell.KeyCtrlC {
-				return
-			} else if ev.Key() == tcell.KeyEscape {
-				done := papermcSelector.GoBack()
-				if !done {
-					return
-				}
-			} else if ev.Key() == tcell.KeyDown {
-				papermcSelector.SelectorDown()
-			} else if ev.Key() == tcell.KeyUp {
-				papermcSelector.SelectorUp()
-			} else if ev.Key() == tcell.KeyEnter {
-				err := papermcSelector.EnterInput()
-				if err != nil {
-					fmt.Println(err)
-					return
-				}
-			}
-		}
-		if papermcSelector.View == "build-info" {
-			screen.FullWidthField(s, "[ENTER] Download ", 8)
-		} else if papermcSelector.View == "download" {
-			s.Clear()
-			screen.FullWidthField(s, "Downloading ", 4)
-			go func(s tcell.Screen) {
-				err := papermcSelector.Download()
-				if err != nil {
-					_ = s.Beep()
-					fmt.Println("download failed: ", err)
-					return
-				}
-
-				_ = s.Beep()
-			}(s)
-		} else {
-			papermcSelector.Render()
-		}
-		header.Title = papermcSelector.View
-		header.Render(0)
-	}
+	return false
 }

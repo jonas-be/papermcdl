@@ -1,12 +1,39 @@
 package paper_api
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+	"papermc-downloader/internal/util"
+	"papermc-downloader/pkg/latest"
+)
 
 type Versions struct {
 	ProjectID     string   `json:"project_id"`
 	ProjectName   string   `json:"project_name"`
 	VersionGroups []string `json:"version_groups"`
 	Versions      []string `json:"versions"`
+}
+
+func (v Versions) PrintVersions() {
+	for _, version := range v.Versions {
+		fmt.Println(version)
+	}
+}
+
+func (v Versions) GetLatestVersion() (string, error) {
+	_, item, err := latest.GetLatestItem(util.ReverseStringArray(v.Versions))
+	if err != nil {
+		return "", err
+	}
+	return item, nil
+}
+
+func (v Versions) GetLatestVersionGroup() (string, error) {
+	_, item, err := latest.GetLatestItem(util.ReverseStringArray(v.VersionGroups))
+	if err != nil {
+		return "", err
+	}
+	return item, nil
 }
 
 func (p PapermcAPI) GetVersions(project string) (Versions, error) {

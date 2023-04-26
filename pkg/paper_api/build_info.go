@@ -26,6 +26,18 @@ type BuildInfo struct {
 	} `json:"downloads"`
 }
 
+func (b BuildInfo) PrintBuildInfo() {
+	fmt.Println(b.ProjectID)
+	fmt.Println(b.ProjectName)
+	fmt.Println(b.Version)
+	fmt.Println(b.Build)
+	fmt.Println(b.Time)
+	fmt.Println(b.Channel)
+	fmt.Println(b.Promoted)
+	fmt.Println(b.Changes)
+	fmt.Println(b.Downloads)
+}
+
 func (p PapermcAPI) GetBuildInfo(project string, version string, build string) (BuildInfo, error) {
 	res, err := p.sendRequest(fmt.Sprintf("/api/v2/projects/%v/versions/%v/builds/%v", project, version, build))
 	if err != nil {
