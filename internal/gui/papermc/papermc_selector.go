@@ -2,10 +2,10 @@ package papermc
 
 import (
 	"fmt"
-	"papermc-downloader/internal/gui/list"
-	"papermc-downloader/internal/util"
-	"papermc-downloader/pkg/latest"
-	"papermc-downloader/pkg/paper_api"
+	"papermcdl/internal/gui/list"
+	"papermcdl/internal/util"
+	"papermcdl/pkg/latest"
+	"papermcdl/pkg/paper_api"
 	"strconv"
 	"strings"
 )

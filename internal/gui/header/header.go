@@ -2,7 +2,7 @@ package header
 
 import (
 	"github.com/gdamore/tcell/v2"
-	"papermc-downloader/internal/util/screen"
+	"papermcdl/internal/util/screen"
 )
 
 type Header struct {

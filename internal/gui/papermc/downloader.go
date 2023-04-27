@@ -7,8 +7,8 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"papermc-downloader/internal/util/screen"
-	"papermc-downloader/pkg/paper_api"
+	"papermcdl/internal/util/screen"
+	"papermcdl/pkg/paper_api"
 	"strconv"
 	"time"
 )

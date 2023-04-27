@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"github.com/gdamore/tcell/v2"
 	"log"
-	"papermc-downloader/internal/gui/header"
-	"papermc-downloader/internal/gui/list"
-	"papermc-downloader/internal/gui/papermc"
-	"papermc-downloader/internal/util/screen"
-	"papermc-downloader/pkg/paper_api"
+	"papermcdl/internal/gui/header"
+	"papermcdl/internal/gui/list"
+	"papermcdl/internal/gui/papermc"
+	"papermcdl/internal/util/screen"
+	"papermcdl/pkg/paper_api"
 	"time"
 )
 

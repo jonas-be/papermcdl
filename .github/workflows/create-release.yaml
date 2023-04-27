@@ -27,7 +27,7 @@ jobs:
         with:
           token: ${{ secrets.TOKEN }}
           tag: ${{ github.ref }}
-          name: Release ${{ steps.gen_version.outputs.VERSION }}
+          name: ${{ steps.gen_version.outputs.VERSION }}
           body: |
             This is release ${{ steps.gen_version.outputs.VERSION }}
           draft: false

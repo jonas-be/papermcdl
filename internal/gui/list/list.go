@@ -3,8 +3,8 @@ package list
 import (
 	"fmt"
 	"github.com/gdamore/tcell/v2"
-	"papermc-downloader/internal/util"
-	"papermc-downloader/internal/util/screen"
+	"papermcdl/internal/util"
+	"papermcdl/internal/util/screen"
 	"strconv"
 )
 

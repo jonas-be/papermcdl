@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
-	"papermc-downloader/internal/gui"
-	"papermc-downloader/pkg/latest"
-	"papermc-downloader/pkg/paper_api"
+	"papermcdl/internal/gui"
+	"papermcdl/pkg/latest"
+	"papermcdl/pkg/paper_api"
 	"strings"
 )
 

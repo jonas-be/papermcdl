@@ -1,4 +1,4 @@
-module papermc-downloader
+module papermcdl
 
 go 1.20
 
