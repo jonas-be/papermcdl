@@ -28,3 +28,15 @@ If all required flags have valid values, the project get downloaded.
 | -v   | YES      |           | Specify the version of the project or use ``l`` for the latest version |
 | -b   | NO       | ``l``     | Specify the build number or use ``l`` for the latest build             |
 | -i   | NO       | ``false`` | Add this flag, if you only want infos                                  |
+
+
+### Examples
+
+````bash
+# Download latest paper 1.19.4 build
+papermcdl -p paper -v 1.19.4
+# Download latest build of the latest paper version
+papermcdl -p paper -v l
+# Only display some info about the build
+papermcdl -p paper -v 1.19.4 -i
+````
