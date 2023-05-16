@@ -101,7 +101,7 @@ func StartGUI(papermcAPI paper_api.PapermcAPI) {
 			}
 			stopChan <- true
 			quit()
-			fmt.Println("Download successfully!")
+			fmt.Println("Downloaded successfully!")
 			return
 		} else {
 			papermcSelector.Render()
