@@ -52,15 +52,12 @@ func (p *PapermcSelector) EnterInput() error {
 	case "projects":
 		p.project = p.List.GetSelected()
 		p.ShowVersionGroups(p.project)
-		break
 	case "version-groups":
 		p.versionGroup = p.List.GetSelected()
 		p.ShowVersions(p.versions, p.versionGroup)
-		break
 	case "versions":
 		p.version = p.List.GetSelected()
 		p.ShowBuilds(p.project, p.version)
-		break
 	case "builds":
 		p.build = p.List.GetSelected()
 		p.View = "build-info"
@@ -68,10 +65,8 @@ func (p *PapermcSelector) EnterInput() error {
 		if err != nil {
 			return err
 		}
-		break
 	case "build-info":
 		p.View = "download"
-		break
 	}
 	return nil
 }
@@ -146,7 +141,7 @@ func (p PapermcSelector) versionGroupFilter(versions paper_api.Versions, version
 	var versionListTmp []string
 
 	filter := ""
-	for i, _ := range version {
+	for i := range version {
 		filter = filter + string([]rune(version)[i])
 		versionListTmp = []string{}
 		for _, str := range versions.Versions {

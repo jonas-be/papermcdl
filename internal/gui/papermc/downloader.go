@@ -2,15 +2,17 @@ package papermc
 
 import (
 	"fmt"
-	"github.com/gdamore/tcell/v2"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"papermcdl/internal/util"
 	"papermcdl/internal/util/screen"
 	"papermcdl/pkg/paper_api"
 	"strconv"
 	"time"
+
+	"github.com/gdamore/tcell/v2"
 )
 
 type DataField struct {
@@ -120,27 +122,27 @@ func DownloadWithProgressBar(url string, fileName string, s tcell.Screen, line i
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		fmt.Println("Error creating request:", err)
+		util.LogCon("Error creating request:", err, util.Error)
 		return err
 	}
 
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Error sending request:", err)
+		util.LogCon("Error sending request:", err, util.Error)
 		return err
 	}
 	defer resp.Body.Close()
 
 	file, err := os.Create(fileName)
 	if err != nil {
-		fmt.Println("Error creating file:", err)
+		util.LogCon("Error creating file:", err, util.Error)
 		return err
 	}
 	defer file.Close()
 
 	size, err := strconv.Atoi(resp.Header.Get("Content-Length"))
 	if err != nil {
-		fmt.Println("Error reading header:", err)
+		util.LogCon("Error reading header:", err, util.Error)
 		return err
 	}
 	done := make(chan int64)
@@ -151,7 +153,7 @@ func DownloadWithProgressBar(url string, fileName string, s tcell.Screen, line i
 
 	n, err := io.Copy(file, resp.Body)
 	if err != nil {
-		fmt.Println("Error writing to file:", err)
+		util.LogCon("Error copying file:", err, util.Error)
 		return err
 	}
 

@@ -28,6 +28,14 @@ func (b Builds) GetLatestBuild() (string, error) {
 	return item, nil
 }
 
+func (b Builds) GetLatestSnapshotBuild() (string, error) {
+	_, item, err := latest.GetLatestItemSnapshot(util.ReverseStringArray(latest.ConvertIntArrayToStringArray(b.Builds)))
+	if err != nil {
+		return "", err
+	}
+	return item, nil
+}
+
 func (p PapermcAPI) GetBuilds(project string, version string) (Builds, error) {
 	res, err := p.sendRequest(fmt.Sprintf("/api/v2/projects/%v/versions/%v", project, version))
 	if err != nil {
