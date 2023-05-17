@@ -23,6 +23,16 @@ func GetLatestItem(items []string) (int, string, error) {
 	return 0, "", NoStableItemFoundError{}
 }
 
+// Like getLatestItem but for snapshots
+func GetLatestItemSnapshot(items []string) (int, string, error) {
+	for i, item := range items {
+		if strings.Contains(strings.ToLower(item), "snapshot") || strings.Contains(strings.ToLower(item), "pre") {
+			return i, item, nil
+		}
+	}
+	return 0, "", NoStableItemFoundError{}
+}
+
 func ConvertIntArrayToStringArray(intArr []int) []string {
 	strArr := make([]string, len(intArr))
 	for i, v := range intArr {

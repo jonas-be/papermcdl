@@ -28,6 +28,14 @@ func (v Versions) GetLatestVersion() (string, error) {
 	return item, nil
 }
 
+func (v Versions) GetLatestSnapshotVersion() (string, error) {
+	_, item, err := latest.GetLatestItemSnapshot(util.ReverseStringArray(v.Versions))
+	if err != nil {
+		return "", err
+	}
+	return item, nil
+}
+
 func (v Versions) GetLatestVersionGroup() (string, error) {
 	_, item, err := latest.GetLatestItem(util.ReverseStringArray(v.VersionGroups))
 	if err != nil {

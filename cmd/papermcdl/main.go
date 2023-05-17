@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"papermcdl/internal/gui"
+	"papermcdl/internal/util"
 	"papermcdl/pkg/latest"
 	"papermcdl/pkg/paper_api"
 	"strings"
@@ -11,21 +12,22 @@ import (
 
 func main() {
 	projectFlag := flag.String("p", "", "Project you want to download.")
-	versionFlag := flag.String("v", "", "Version or Version Group of the Project. You can use\"l\" to get the latest version.")
-	buildFlag := flag.String("b", "l", "(Optional) Build Number of the Project. You can use\"l\" to get the latest version.")
+	versionFlag := flag.String("v", "l", "(Optional) Version or Version Group of the Project. Defaults to latest version.")
+	buildFlag := flag.String("b", "l", "(Optional) Build Number of the Project. You can use\"l\" to get the latest version, or \"ls\" to get the latest snapshot. Defaults to latest version.")
 	infoFlag := flag.Bool("i", false, "(Optional) Show info or list available only.")
 	flag.Parse()
 
 	papermcAPI := paper_api.PapermcAPI{URL: "https://papermc.io"}
 
-	if *projectFlag == "" && *versionFlag == "" && *buildFlag == "l" && *infoFlag == false {
+	// gui.StartGUI(papermcAPI) if no flags are provided
+	if *projectFlag == "" && *versionFlag == "l" && *buildFlag == "l" && !*infoFlag {
 		gui.StartGUI(papermcAPI)
 		return
 	}
 
 	projects, err := papermcAPI.GetProjects()
 	if err != nil {
-		fmt.Println("error getting projects: ", err)
+		util.LogCon("error getting projects: ", err, util.Error)
 		return
 	}
 	if !checkProjectFlag(projects, projectFlag) {
@@ -34,7 +36,7 @@ func main() {
 
 	versions, err := papermcAPI.GetVersions(*projectFlag)
 	if err != nil {
-		fmt.Println("error getting projects: ", err)
+		util.LogCon("error getting projects: ", err, util.Error)
 		return
 	}
 	if !checkVersionFlag(versions, versionFlag) {
@@ -43,7 +45,7 @@ func main() {
 
 	builds, err := papermcAPI.GetBuilds(*projectFlag, *versionFlag)
 	if err != nil {
-		fmt.Println("error getting projects: ", err)
+		util.LogCon("error getting projects: ", err, util.Error)
 		return
 	}
 	if !checkBuildFlag(builds, buildFlag) {
@@ -61,7 +63,7 @@ func main() {
 	if *infoFlag {
 		buildInfo, err := papermcAPI.GetBuildInfo(*projectFlag, *versionFlag, *buildFlag)
 		if err != nil {
-			fmt.Println("can not get buildInfo: ", err)
+			util.LogCon("can not get buildInfo: ", err, util.Error)
 			return
 		}
 		buildInfo.PrintBuildInfo()
@@ -70,7 +72,7 @@ func main() {
 
 	err = papermcAPI.Download(*projectFlag, *versionFlag, *buildFlag)
 	if err != nil {
-		fmt.Println("can not download: ", err)
+		util.LogCon("can not download: ", err, util.Error)
 	}
 }
 
@@ -78,7 +80,7 @@ func checkProjectFlag(projects paper_api.Projects, projectFlag *string) bool {
 	if stringArrayContains(projects.Projects, *projectFlag) {
 		return true
 	}
-	fmt.Println("Please provide a valid project:")
+	util.LogCon("Please provide a valid project:", "", util.Warning)
 	projects.PrintProjects()
 	return false
 }
@@ -90,12 +92,20 @@ func checkVersionFlag(versions paper_api.Versions, versionFlag *string) bool {
 		var err error
 		*versionFlag, err = versions.GetLatestVersion()
 		if err != nil {
-			fmt.Println("No latest version:", err)
+			util.LogCon("No latest version: ", err, util.Error)
+			return false
+		}
+		return true
+	} else if strings.ToLower(*versionFlag) == "s" {
+		var err error
+		*versionFlag, err = versions.GetLatestSnapshotVersion()
+		if err != nil {
+			util.LogCon("No snapshot version: ", err, util.Error)
 			return false
 		}
 		return true
 	}
-	fmt.Println("Please provide a valid version:")
+	util.LogCon("Please provide a valid version: ", "", util.Warning)
 	versions.PrintVersions()
 	return false
 }
@@ -107,12 +117,20 @@ func checkBuildFlag(builds paper_api.Builds, buildFlag *string) bool {
 		var err error
 		*buildFlag, err = builds.GetLatestBuild()
 		if err != nil {
-			fmt.Println("No latest build:", err)
+			util.LogCon("No latest build: ", err, util.Error)
+			return false
+		}
+		return true
+	} else if strings.ToLower(*buildFlag) == "s" {
+		var err error
+		*buildFlag, err = builds.GetLatestSnapshotBuild()
+		if err != nil {
+			util.LogCon("No snapshot build: ", err, util.Error)
 			return false
 		}
 		return true
 	}
-	fmt.Println("Please provide a valid build:")
+	util.LogCon("Please provide a valid build:", "", util.Warning)
 	builds.PrintBuilds()
 	return false
 }

@@ -1,9 +1,10 @@
 package paper_api
 
 import (
-	"github.com/jarcoal/httpmock"
 	"reflect"
 	"testing"
+
+	"github.com/jarcoal/httpmock"
 )
 
 func TestPapermcAPI_GetVersions(t *testing.T) {
