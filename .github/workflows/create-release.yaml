@@ -28,7 +28,6 @@ jobs:
           token: ${{ secrets.TOKEN }}
           tag: ${{ github.ref }}
           name: ${{ steps.gen_version.outputs.VERSION }}
-          body: |
-            ${{ steps.gen_version.outputs.TAG_MESSAGE }}
+          body: ${{ steps.gen_version.outputs.TAG_MESSAGE }}
           draft: false
           prerelease: false
