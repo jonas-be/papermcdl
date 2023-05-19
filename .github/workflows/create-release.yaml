@@ -29,6 +29,6 @@ jobs:
           tag: ${{ github.ref }}
           name: ${{ steps.gen_version.outputs.VERSION }}
           body: |
-            This is release ${{ steps.gen_version.outputs.VERSION }}
+            ${{ steps.gen_version.outputs.TAG_MESSAGE }}
           draft: false
           prerelease: false

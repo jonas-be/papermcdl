@@ -2,10 +2,10 @@ package papermc
 
 import (
 	"fmt"
-	"papermcdl/internal/gui/list"
-	"papermcdl/internal/util"
-	"papermcdl/pkg/latest"
-	"papermcdl/pkg/paper_api"
+	"github.com/jonas-be/papermcdl/internal/gui/list"
+	"github.com/jonas-be/papermcdl/internal/util"
+	"github.com/jonas-be/papermcdl/pkg/latest"
+	"github.com/jonas-be/papermcdl/pkg/paper_api"
 	"strconv"
 	"strings"
 )

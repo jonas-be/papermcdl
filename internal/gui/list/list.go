@@ -3,8 +3,8 @@ package list
 import (
 	"fmt"
 	"github.com/gdamore/tcell/v2"
-	"papermcdl/internal/util"
-	"papermcdl/internal/util/screen"
+	"github.com/jonas-be/papermcdl/internal/util"
+	"github.com/jonas-be/papermcdl/internal/util/screen"
 	"strconv"
 )
 

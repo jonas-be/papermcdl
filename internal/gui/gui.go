@@ -3,12 +3,12 @@ package gui
 import (
 	"fmt"
 	"github.com/gdamore/tcell/v2"
+	"github.com/jonas-be/papermcdl/internal/gui/header"
+	"github.com/jonas-be/papermcdl/internal/gui/list"
+	"github.com/jonas-be/papermcdl/internal/gui/papermc"
+	"github.com/jonas-be/papermcdl/internal/util/screen"
+	"github.com/jonas-be/papermcdl/pkg/paper_api"
 	"log"
-	"papermcdl/internal/gui/header"
-	"papermcdl/internal/gui/list"
-	"papermcdl/internal/gui/papermc"
-	"papermcdl/internal/util/screen"
-	"papermcdl/pkg/paper_api"
 	"time"
 )
 

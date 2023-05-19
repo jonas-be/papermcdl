@@ -2,7 +2,7 @@ package header
 
 import (
 	"github.com/gdamore/tcell/v2"
-	"papermcdl/internal/util/screen"
+	"github.com/jonas-be/papermcdl/internal/util/screen"
 )
 
 type Header struct {

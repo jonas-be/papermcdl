@@ -3,8 +3,8 @@ package paper_api
 import (
 	"encoding/json"
 	"fmt"
-	"papermcdl/internal/util"
-	"papermcdl/pkg/latest"
+	"github.com/jonas-be/papermcdl/internal/util"
+	"github.com/jonas-be/papermcdl/pkg/latest"
 )
 
 type Builds struct {

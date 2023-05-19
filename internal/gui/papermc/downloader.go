@@ -3,12 +3,12 @@ package papermc
 import (
 	"fmt"
 	"github.com/gdamore/tcell/v2"
+	"github.com/jonas-be/papermcdl/internal/util/screen"
+	"github.com/jonas-be/papermcdl/pkg/paper_api"
 	"io"
 	"log"
 	"net/http"
 	"os"
-	"papermcdl/internal/util/screen"
-	"papermcdl/pkg/paper_api"
 	"strconv"
 	"time"
 )

@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
-	"papermcdl/internal/gui"
-	"papermcdl/pkg/latest"
-	"papermcdl/pkg/paper_api"
+	"github.com/jonas-be/papermcdl/internal/gui"
+	"github.com/jonas-be/papermcdl/pkg/latest"
+	"github.com/jonas-be/papermcdl/pkg/paper_api"
 	"strings"
 )
 
