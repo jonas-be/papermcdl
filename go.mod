@@ -1,4 +1,4 @@
-module papermcdl
+module github.com/jonas-be/papermcdl
 
 go 1.20
 
