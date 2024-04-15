@@ -66,7 +66,7 @@ func StartGUI(papermcAPI paper_api.PapermcAPI) {
 		case *tcell.EventKey:
 			if ev.Key() == tcell.KeyCtrlC || string(ev.Rune()) == "q" {
 				return
-			} else if ev.Key() == tcell.KeyEscape || string(ev.Rune()) == "h" {
+			} else if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlLeftSq {
 				done := papermcSelector.GoBack()
 				if !done {
 					return
