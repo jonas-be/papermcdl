@@ -64,18 +64,18 @@ func StartGUI(papermcAPI paper_api.PapermcAPI) {
 		case *tcell.EventResize:
 			s.Sync()
 		case *tcell.EventKey:
-			if ev.Key() == tcell.KeyCtrlC {
+			if ev.Key() == tcell.KeyCtrlC || string(ev.Rune()) == "q" {
 				return
-			} else if ev.Key() == tcell.KeyEscape {
+			} else if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlLeftSq {
 				done := papermcSelector.GoBack()
 				if !done {
 					return
 				}
-			} else if ev.Key() == tcell.KeyDown {
+			} else if ev.Key() == tcell.KeyDown || string(ev.Rune()) == "j"{
 				papermcSelector.SelectorDown()
-			} else if ev.Key() == tcell.KeyUp {
+			} else if ev.Key() == tcell.KeyUp || string(ev.Rune()) == "k"{
 				papermcSelector.SelectorUp()
-			} else if ev.Key() == tcell.KeyEnter {
+			} else if ev.Key() == tcell.KeyEnter || string(ev.Rune()) == "l"{
 				err := papermcSelector.EnterInput()
 				if err != nil {
 					fmt.Println(err)
