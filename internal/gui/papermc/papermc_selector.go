@@ -165,7 +165,7 @@ func (p PapermcSelector) versionGroupFilter(versions paper_api.Versions, version
 func (p *PapermcSelector) selectAndTagLatest() {
 	id, item, err := latest.GetLatestItem(p.List.List)
 	if err == nil {
-		p.List.Tags = []list.Tag{{Label: "latest/stable", ItemName: item}}
+		p.List.Tags = []list.Tag{{Label: "latest", ItemName: item}}
 		p.List.Selected = id
 	}
 }
