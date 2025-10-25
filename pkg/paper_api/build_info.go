@@ -39,7 +39,7 @@ func (b BuildInfo) PrintBuildInfo() {
 }
 
 func (p PapermcAPI) GetBuildInfo(project string, version string, build string) (BuildInfo, error) {
-	res, err := p.sendRequest(fmt.Sprintf("/api/v2/projects/%v/versions/%v/builds/%v", project, version, build))
+	res, err := p.sendRequest(fmt.Sprintf("/projects/%v/versions/%v/builds/%v", project, version, build))
 	if err != nil {
 		return BuildInfo{}, err
 	}

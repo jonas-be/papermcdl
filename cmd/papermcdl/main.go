@@ -16,7 +16,7 @@ func main() {
 	infoFlag := flag.Bool("i", false, "(Optional) Show info or list available only.")
 	flag.Parse()
 
-	papermcAPI := paper_api.PapermcAPI{URL: "https://papermc.io"}
+	papermcAPI := paper_api.PapermcAPI{URL: "https://fill.papermc.io/v2"}
 
 	if *projectFlag == "" && *versionFlag == "" && *buildFlag == "l" && *infoFlag == false {
 		gui.StartGUI(papermcAPI)

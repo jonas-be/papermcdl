@@ -16,7 +16,7 @@ func (p PapermcAPI) GetDownloadString(project string, version string, build stri
 	if err != nil {
 		return "", "", err
 	}
-	return fmt.Sprintf("%v/api/v2/projects/%v/versions/%v/builds/%v/downloads/%v",
+	return fmt.Sprintf("%v/projects/%v/versions/%v/builds/%v/downloads/%v",
 		p.URL, project, version, build, p.GetFileName(buildInfo)), p.GetFileName(buildInfo), nil
 }
 

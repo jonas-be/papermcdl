@@ -37,7 +37,7 @@ func (v Versions) GetLatestVersionGroup() (string, error) {
 }
 
 func (p PapermcAPI) GetVersions(project string) (Versions, error) {
-	res, err := p.sendRequest("/api/v2/projects/" + project)
+	res, err := p.sendRequest("/projects/" + project)
 	if err != nil {
 		return Versions{}, err
 	}

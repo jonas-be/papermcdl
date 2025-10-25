@@ -1,5 +1,8 @@
 # Papermcdl
 
+> [!WARNING]
+> At the moment it is not possible to see which versions are stable and which are beta. [Related issue](https://github.com/jonas-be/papermcdl/issues/4)
+
 Download all PaperMC projects with ease using _papermcdl_.
 Choose between a user-friendly [GUI](#gui) or [command-line flags](#cli-with-flags) to streamline the process.
 Perfect for developers and Minecraft server admins.

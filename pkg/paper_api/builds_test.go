@@ -10,7 +10,7 @@ func TestPapermcAPI_GetBuilds(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder("GET", "https://papermc.io/api/v2/projects/velocity/versions/3.1.1",
+	httpmock.RegisterResponder("GET", "https://fill.papermc.io/v2/projects/velocity/versions/3.1.1",
 		httpmock.NewStringResponder(200, "{\"project_id\":\"velocity\",\"project_name\":\"Velocity\",\"version\":\"3.1.1\",\"builds\":[98,99,102]}"))
 
 	want := Builds{
@@ -21,7 +21,7 @@ func TestPapermcAPI_GetBuilds(t *testing.T) {
 	}
 
 	p := PapermcAPI{
-		URL: "https://papermc.io",
+		URL: "https://fill.papermc.io/v2",
 	}
 	builds, err := p.GetBuilds("velocity", "3.1.1")
 	if err != nil {
