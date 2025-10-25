@@ -16,7 +16,7 @@ func (p Projects) PrintProjects() {
 }
 
 func (p PapermcAPI) GetProjects() (Projects, error) {
-	res, err := p.sendRequest("/api/v2/projects/")
+	res, err := p.sendRequest("/projects/")
 	if err != nil {
 		return Projects{}, err
 	}

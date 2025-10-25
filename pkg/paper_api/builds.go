@@ -29,7 +29,7 @@ func (b Builds) GetLatestBuild() (string, error) {
 }
 
 func (p PapermcAPI) GetBuilds(project string, version string) (Builds, error) {
-	res, err := p.sendRequest(fmt.Sprintf("/api/v2/projects/%v/versions/%v", project, version))
+	res, err := p.sendRequest(fmt.Sprintf("/projects/%v/versions/%v", project, version))
 	if err != nil {
 		return Builds{}, err
 	}
