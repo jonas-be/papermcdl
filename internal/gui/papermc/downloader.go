@@ -97,7 +97,7 @@ func PrintDownloadPercent(done chan int64, path string, total int64, s tcell.Scr
 
 			var percent float64 = float64(size) / float64(total) * 100
 
-			screen.FullWidthField(s, fmt.Sprintf("%.0f%", percent), line)
+			screen.FullWidthField(s, fmt.Sprintf("%.0f%%", percent), line)
 
 			writerPos := 0
 			w, _ := s.Size()
