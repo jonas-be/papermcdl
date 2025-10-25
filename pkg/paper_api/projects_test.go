@@ -10,7 +10,7 @@ func TestPapermcAPI_GetProjects(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder("GET", "https://papermc.io/api/v2/projects/",
+	httpmock.RegisterResponder("GET", "https://fill.papermc.io/v2/projects/",
 		httpmock.NewStringResponder(200, "{\"projects\":[\"paper\",\"travertine\",\"waterfall\",\"velocity\",\"folia\"]}"))
 
 	want := Projects{Projects: []string{
@@ -22,7 +22,7 @@ func TestPapermcAPI_GetProjects(t *testing.T) {
 	}}
 
 	p := PapermcAPI{
-		URL: "https://papermc.io",
+		URL: "https://fill.papermc.io/v2",
 	}
 	projects, err := p.GetProjects()
 	if err != nil {

@@ -10,7 +10,7 @@ func TestPapermcAPI_GetBuildInfo(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder("GET", "https://papermc.io/api/v2/projects/velocity/versions/3.1.1/builds/445",
+	httpmock.RegisterResponder("GET", "https://fill.papermc.io/v2/projects/velocity/versions/3.1.1/builds/445",
 		httpmock.NewStringResponder(200, "{\"project_id\":\"paper\",\"project_name\":\"Paper\",\"version\":\"1.8.8\",\"build\":445,\"time\":\"2021-12-20T00:10:48.936Z\",\"channel\":\"default\",\"promoted\":false,\"changes\":[{\"commit\":\"2ce7ea620a6d9590a9f93b47ac45e240dac7988a\",\"summary\":\"Update\",\"message\":\"Update\"}],\"downloads\":{\"application\":{\"name\":\"paper-1.8.8-445.jar\",\"sha256\":\"7ff6d2cec671ef0d95b3723b5c92890118fb882d73b7f8fa0a2cd31d97c55f86\"}}}"))
 
 	want := BuildInfo{
@@ -49,7 +49,7 @@ func TestPapermcAPI_GetBuildInfo(t *testing.T) {
 	}
 
 	p := PapermcAPI{
-		URL: "https://papermc.io",
+		URL: "https://fill.papermc.io/v2",
 	}
 	builds, err := p.GetBuildInfo("velocity", "3.1.1", "445")
 	if err != nil {
